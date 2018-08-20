@@ -35,7 +35,6 @@ function setup() {
 
 function draw() {
     // put the camera on the canvas
-
     colorMode(RGB);
     blendMode(BLEND);
     background(0, 0, 0, 25);
@@ -57,7 +56,7 @@ function draw() {
         ellipse(p.x, p.y, p.size, p.size);
     }
 
-    var generateCount = Math.floor(mic.getLevel() * 100);
+    var generateCount = Math.floor(mic.getLevel() * 1000);
     for (var i = 0; i < generateCount; i++) {
         particleIndex++;
         particleIndex %= particles.length;
