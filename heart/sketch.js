@@ -1,6 +1,8 @@
-var heartSize = 30;
+var hs = 10;
+var al =20;
 var a = [];
 var i = 0;
+var n;
 function setup() {
     createCanvas(640, 480);
     background(0);
@@ -15,13 +17,13 @@ class heart {
         this.a = a;
         this.alpha = alpha;
     }
-    setHeartSize(s){
-        this.a += s;
+    set sheartSize(s){
+        this.a = s;
     }
-    setHeartAlpha(a){
-        this.alpha -= a;
+    set sheartAlpha(a){
+        this.alpha = a;
     }
-    getHeartAlpha(){
+    get gheartAlpha(){
         return this.alpha;
     }
     heartDraw(){
@@ -55,14 +57,18 @@ class heart {
 
 function draw() {
     a[0].heartDraw();
-    a[0].setHeartSize(0.05*i++);
-    a[0].setHeartAlpha(0.05*i);
-    if(a[0].getHeartAlpha <= 0){
-        console.log("alpha <=0");
-        a.length = 0;
+    hs+=0.05*i++;
+    a[0].sheartSize = hs;
+    al-= 0.8;
+    a[0].sheartAlpha = al;
+    n = a[0].gheartAlpha;
+    if(n <= 0){
+        console.log("aaa");
         i=0;
+        a[0].sheartSize = 10;
+        a[0].sheartAlpha = 20;
+        a.length = 0;
         a.push(new heart(200,200,10,20));
-        background(0);
     }
 
 
