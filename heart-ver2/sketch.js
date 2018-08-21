@@ -1,9 +1,8 @@
-var heartSize = 30;
 var hearts = [];
 var index = 0;
 
 function setup() {
-    createCanvas(640, 480);
+    createCanvas(1800, 1000);
     background(0);
     angleMode(DEGREES);
 }
@@ -54,7 +53,7 @@ function draw() {
     }
 
     if(frameCount % 30 == 0) {
-        hearts[index] = new heart(200,200,15,70);
+        hearts[index] = new heart(200,200,14,70);
 
         if(index == 20)
             index = 0;

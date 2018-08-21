@@ -1,22 +1,61 @@
 var sound;
 var fft;
-var spectrumWeight = [];
 var sumOfWeight = 0;
-var checkNum = 0;
+var hearts = [];
+var index = 0;
+
+class heart {
+    constructor(x, y, size ,alpha){
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.alpha = alpha;
+    }
+    heartDraw(){
+        noStroke();
+        beginShape();
+        curveVertex(this.x,this.y-this.size-this.size/8);
+        curveVertex(this.x,this.y-this.size-this.size/8);
+
+        curveVertex(this.x-this.size/2-this.size/8,this.y-2*this.size+this.size/8);
+        curveVertex(this.x-this.size/2-this.size-this.size/8,this.y-2*this.size+this.size/8);
+
+        curveVertex(this.x-2*this.size-this.size/4,this.y-this.size);
+        curveVertex(this.x-2*this.size-this.size/4,this.y);
+        curveVertex(this.x-this.size-this.size/2,this.y+this.size);
+
+        vertex(this.x,this.y+2*this.size);
+        vertex(this.x,this.y+2*this.size);
+        vertex(this.x,this.y+2*this.size);
+
+        curveVertex(this.x+this.size+this.size/2,this.y+this.size);
+
+        curveVertex(this.x+2*this.size+this.size/4,this.y);
+        curveVertex(this.x+2*this.size+this.size/4,this.y-this.size);
+
+        curveVertex(this.x+this.size*13/8,this.y-2*this.size+this.size/8);
+        curveVertex(this.x+this.size*5/8,this.y-2*this.size+this.size/8);
+        endShape(CLOSE);
+    }
+}
 
 function preload() {
-    sound = loadSound("iu.mp3");
+    sound = loadSound("blackpink.mp3");
 }
 
 function setup() {
-    var cnv = createCanvas(100, 100);
+    var cnv = createCanvas(1800, 1000);
     cnv.mouseClicked(togglePlay);
     fft = new p5.FFT(0, 256);
     sound.amp(0.5);
+    angleMode(DEGREES);
 }
 
 function draw() {
-    background(0);
+    colorMode(RGB);
+    blendMode(BLEND);
+    background(0, 0, 0, 25);
+    blendMode(ADD);
     colorMode(HSB);
 
     var spectrum = fft.analyze();
@@ -25,7 +64,6 @@ function draw() {
     //fill(0,255,0); // spectrum is green
     //console.log(spectrum.length);
     sumOfWeight = 0;
-    checkNum = 0;
 
     for (var i = 0; i < spectrum.length; i++) {
         if (spectrum[i] >= 0 && spectrum[i] < 36) {
@@ -53,28 +91,45 @@ function draw() {
 
     console.log(sumOfWeight);
 
-    for (var i = 0; i < spectrum.length; i++) {
-        // console.log("second" + i);
-        var x = map(i, 0, spectrum.length, 0, width);
-        var h = -height + map(spectrum[i], 0, 255, height, 0);
-        fill(map(sumOfWeight, 5000, 10000, 0, 255) % 256, 255, 255);
-        rect(x, height, width / spectrum.length, h)
+    for(var i = 0; i<hearts.length; i++){
+        hearts[i].size += 0.2;
+        hearts[i].alpha -= 1;
+
+        fill(map(sumOfWeight, 5000, 10000, 0, 255) % 256, 255, 255, hearts[i].alpha);
+        hearts[i].heartDraw();
     }
 
+    if(frameCount % 20 == 0) {
+        hearts[index] = new heart(200,200,14,70);
 
-    colorMode(RGB);
-
-    var waveform = fft.waveform();
-    noFill();
-    beginShape();
-    stroke(255, 0, 0); // waveform is red
-    strokeWeight(1);
-    for (var i = 0; i < waveform.length; i++) {
-        var x = map(i, 0, waveform.length, 0, width);
-        var y = map(waveform[i], -1, 1, 0, height);
-        vertex(x, y);
+        if(index == 20)
+            index = 0;
+        else
+            index++;
     }
-    endShape();
+
+    // for (var i = 0; i < spectrum.length; i++) {
+    //     // console.log("second" + i);
+    //     var x = map(i, 0, spectrum.length, 0, width);
+    //     var h = -height + map(spectrum[i], 0, 255, height, 0);
+    //     fill(map(sumOfWeight, 5000, 10000, 0, 255) % 256, 255, 255);
+    //     rect(x, height, width / spectrum.length, h)
+    // }
+
+
+    // colorMode(RGB);
+    //
+    // var waveform = fft.waveform();
+    // noFill();
+    // beginShape();
+    // stroke(255, 0, 0); // waveform is red
+    // strokeWeight(1);
+    // for (var i = 0; i < waveform.length; i++) {
+    //     var x = map(i, 0, waveform.length, 0, width);
+    //     var y = map(waveform[i], -1, 1, 0, height);
+    //     vertex(x, y);
+    // }
+    // endShape();
 
     text('click to play/pause', 4, 10);
 }
