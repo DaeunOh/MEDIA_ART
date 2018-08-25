@@ -30,7 +30,7 @@ function setup() {
     video.size(width, height);
     video2.size(width, height);
     video.hide();
-    prevFrame = createImage(video.width, video.height);
+    prevFrame = createImage(video.width, video.height, RGB);
 
     // mic = new p5.AudioIn();
     // mic.start();
@@ -87,7 +87,7 @@ function draw() {
                 //setRect(x,y);
                 //
                 if(x >= dx-50 && x <= dx+100 && y >= dy-50 && y <= dy+100){
-                    setRect(random(0,width-50),random(0,height-50));
+                    setRect(random(0,width-50),random(0,random(height-50)));
                 }
 
             } else {
@@ -104,8 +104,7 @@ function draw() {
 
     // Save frame for the next cycle
     //if (video.canvas) {
-    prevFrame.copy(video, 0, 0, video.width, video.height, 0, 0, video.width, video.height);
-    // Before we read the new frame, we always save the previous frame for comparison!
+    prevFrame.copy(video, 0, 0, video.width, video.height, 0, 0, video.width, video.height); // Before we read the new frame, we always save the previous frame for comparison!
     //}
 
     // colorMode(RGB);
