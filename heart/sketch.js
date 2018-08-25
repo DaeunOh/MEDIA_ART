@@ -28,7 +28,7 @@ class heart {
     }
     heartDraw(){
         noStroke();
-        fill(255,0,0, this.alpha);
+
         beginShape();
         curveVertex(this.x,this.y-this.a-this.a/8);
         curveVertex(this.x,this.y-this.a-this.a/8);
@@ -56,12 +56,15 @@ class heart {
 }
 
 function draw() {
-    a[0].heartDraw();
-    hs+=0.05*i++;
+    background(0, 0, 0, 25);
+
+    hs+=0.2;
     a[0].sheartSize = hs;
-    al-= 0.8;
+    al-= 1;
     a[0].sheartAlpha = al;
     n = a[0].gheartAlpha;
+    fill(255,0,0, n);
+    a[0].heartDraw();
     if(n <= 0){
         console.log("aaa");
         i=0;

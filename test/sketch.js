@@ -4,6 +4,16 @@ var sumOfWeight = 0;
 var hearts = [];
 var index = 0;
 
+//video
+var video;
+var video2;
+var prevFrame;
+var threshold = 50;
+var mic = null;
+//heart
+var heartX = 200;
+var heartY = 200;
+
 class heart {
     constructor(x, y, size ,alpha){
         this.x = x;
@@ -37,6 +47,10 @@ class heart {
         curveVertex(this.x+this.size*5/8,this.y-2*this.size+this.size/8);
         endShape(CLOSE);
     }
+    heartSet(hx,hy){
+        this.x = hx;
+        this.y = hy;
+    }
 }
 
 function preload() {
@@ -44,23 +58,37 @@ function preload() {
 }
 
 function setup() {
-    var cnv = createCanvas(1800, 1000);
+    var cnv =  createCanvas(640, 480);
+    pixelDensity(1);
+    video = createCapture(VIDEO);
+    video2 = createCapture(VIDEO);
+    video.size(width, height);
+    video2.size(width, height);
+    video.hide();
+    prevFrame = createImage(video.width, video.height, RGB);
+
+    //var cnv = createCanvas(1800, 1000);
     cnv.mouseClicked(togglePlay);
     fft = new p5.FFT(0, 256);
     sound.amp(0.5);
     angleMode(DEGREES);
+
 }
+
 
 function draw() {
     colorMode(RGB);
     blendMode(BLEND);
-    background(0, 0, 0, 25);
+    background(0,0,0,25);
     blendMode(ADD);
     colorMode(HSB);
 
+    image(prevFrame, 0, 0);
+    loadPixels();
+
     var spectrum = fft.analyze();
 
-    noStroke();
+
     //fill(0,255,0); // spectrum is green
     //console.log(spectrum.length);
     sumOfWeight = 0;
@@ -100,13 +128,93 @@ function draw() {
     }
 
     if(frameCount % 20 == 0) {
-        hearts[index] = new heart(200,200,14,70);
+        hearts[index] = new heart(heartX,heartY,14,70);
 
         if(index == 20)
             index = 0;
         else
             index++;
     }
+
+    video.loadPixels();
+    prevFrame.loadPixels();
+
+    // Begin loop to walk through every pixel
+    for (var x = 0; x < video.width; x++) {
+        for (var y = 0; y < video.height; y++) {
+
+            // Step 1, what is the location into the array
+            var loc = (x + y * video.width) * 4;
+
+            // Step 2, what is the previous color
+            var r1 = prevFrame.pixels[loc   ];
+            var g1 = prevFrame.pixels[loc + 1];
+            var b1 = prevFrame.pixels[loc + 2];
+
+            // Step 3, what is the current color
+            var r2 = video.pixels[loc   ];
+            var g2 = video.pixels[loc + 1];
+            var b2 = video.pixels[loc + 2];
+
+            // Step 4, compare colors (previous vs. current)
+            var diff = dist(r1, g1, b1, r2, g2, b2);
+
+            // Step 5, How different are the colors?
+            // If the color at that pixel has changed, then there is motion at that pixel.
+            if (diff > threshold) {
+                // If motion, display black
+                // pixels[loc] = 0;
+                // pixels[loc+1] = 0;x,y
+                // pixels[loc+2] = 0;
+                pixels[loc+3] = 255;
+                //움직인곳에 사각형 생기기
+                //setRect(x,y);
+                //
+                if(x >= heartX-50 && x <= heartX+100 && y >= heartY-50 && y <= heartY+100){
+                    var rx = random(0,width-50);
+                    var ry = random(0,height-50);
+                    heartX = rx;
+                    heartY = ry;
+                    for(var i = 0; i<hearts.length; i++){
+                        hearts[i].heartSet(heartX,heartY);
+                    }
+
+                }
+
+            } else {
+                // If not, display white
+                pixels[loc] = 255;
+                pixels[loc+1] = 255;
+                pixels[loc+2] = 255;
+                pixels[loc+3] = 255;
+            }
+        }
+    }
+    updatePixels();
+
+
+
+    // Save frame for the next cycle
+    //if (video.canvas) {
+    prevFrame.copy(video, 0, 0, video.width, video.height, 0, 0, video.width, video.height); // Before we read the new frame, we always save the previous frame for comparison!
+    //}
+/////
+//     for(var i = 0; i<hearts.length; i++){
+//         hearts[i].size += 0.2;
+//         hearts[i].alpha -= 1;
+//
+//         fill(map(sumOfWeight, 5000, 10000, 0, 255) % 256, 255, 255, hearts[i].alpha);
+//         hearts[i].heartDraw();
+//     }
+//
+//     if(frameCount % 20 == 0) {
+//         hearts[index] = new heart(200,200,14,70);
+//
+//         if(index == 20)
+//             index = 0;
+//         else
+//             index++;
+//     }
 
     // for (var i = 0; i < spectrum.length; i++) {
     //     // console.log("second" + i);
