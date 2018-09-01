@@ -120,9 +120,10 @@ function setup() {
 function draw() {
     // colorMode(RGB);
     // blendMode(BLEND);
-    background(0);
+
     // blendMode(ADD);
     colorMode(HSB, 256);
+    background(0, 0, 255);
 
     var spectrum = fft.analyze();
 
@@ -241,8 +242,8 @@ function draw() {
     //     vertex(x, y);
     // }
     // endShape();
-
-    text('click to play/pause', 4, 10);
+    //
+    // text('click to play/pause', 4, 10);
 }
 
 // fade sound if mouse is over canvas
