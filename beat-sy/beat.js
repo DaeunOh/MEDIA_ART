@@ -1,4 +1,5 @@
-var sound;
+var sound = [];
+var selectedSound = [];
 var fft;
 var sumOfWeight = 0;
 var hearts = [];
@@ -10,10 +11,14 @@ var smallHearts = [];
 var heartIndex = 0;
 var locked = false;
 var prevFrameCount = 0;
+var song = 0;
+var dx;
+var dy;
 
-var dx = 200;
-var dy = 200;
-
+var button1;
+var button2;
+var button3;
+var button4;
 
 var r = 120;
 var hs = 7;
@@ -113,29 +118,108 @@ function smallHeart(x, y, size) {
 }
 
 function preload() {
-    sound = loadSound("iu.mp3");
+    sound[0] = loadSound("btob.mp3");
+    sound[1] = loadSound("iu.mp3");
+    sound[2] = loadSound("blackpink.mp3");
+    sound[3] = loadSound("Selena Gomez-Bad Liar.mp3");
+}
+//
+function btob() {
+    song = 0;
+    for(var i = 0 ;i<sound.length; i++){
+        sound[i].stop();
+    }
+    sound[song].play();
+
+    amplitude = new p5.Amplitude();
+    amplitude.setInput(sound[song]);
+    amplitude.smooth(0.9);
 }
 
+function iu() {
+    song = 1;
+    for(var i = 0 ;i<sound.length; i++){
+        sound[i].stop();
+    }
+    sound[song].play();
+
+    amplitude = new p5.Amplitude();
+    amplitude.setInput(sound[song]);
+    amplitude.smooth(0.9);
+}
+function dudu() {
+    song = 2;
+    for(var i = 0 ;i<sound.length; i++){
+        sound[i].stop();
+    }
+    sound[song].play();
+
+    amplitude = new p5.Amplitude();
+    amplitude.setInput(sound[song]);
+    amplitude.smooth(0.9);
+
+}
+function selena() {
+    song = 3;
+    for(var i = 0 ;i<sound.length; i++){
+        sound[i].stop();
+    }
+    sound[song].play();
+
+    amplitude = new p5.Amplitude();
+    amplitude.setInput(sound[song]);
+    amplitude.smooth(0.9);
+
+
+}
+// function changeMusic(s) {
+//     song = s;
+//     for(var i = 0 ;i<sound.length; i++){
+//         sound[i].stop();
+//     }
+//     sound[song].play();
+//     sound[song].showControls()
+//
+// }
+
 function setup() {
-    c = createCanvas(windowWidth, windowHeight);
+    var c = createCanvas(windowWidth, windowHeight);
     //var cnv = createCanvas(1800, 1000);
-    c.mouseClicked(togglePlay);
+    //c.mouseClicked(togglePlay);
     fft = new p5.FFT(0, 256);
-    sound.amp(0.5);
+    for (var i = 0; i < sound.length; i++) {
+        sound[i].amp(0.5);
+    }
+
     angleMode(DEGREES);
+    dx = windowWidth / 2;
+    dy = windowHeight / 2;
+
+    button1 = createButton('MOVIE-BTOB').style('padding', '10px');
+    button2 = createButton('밤편지-IU').style('padding', '10px');
+    button3 = createButton('뚜두뚜두-BlackPink').style('padding', '10px');
+    button4 = createButton('Bad Liar-Selena Gomez').style('padding', '10px');
+    button1.position(windowWidth - 200, 10);
+    button2.position(windowWidth - 200, 60);
+    button3.position(windowWidth - 200,110);
+    button4.position(windowWidth - 200,160);
+    button1.mousePressed(btob);
+    button2.mousePressed(iu);
+    button3.mousePressed(dudu);
+    button4.mousePressed(selena);
 
     mic = new p5.AudioIn();
     mic.start();
 
     noStroke();
     rectMode(CENTER);
-    backgroundColor = color(random(0, 255), random(0, 255), random(0, 255));
+    backgroundColor = color(0, 0, 0);
 
     amplitude = new p5.Amplitude();
 
-    sound.play();
+    // sound.play();
 
-    amplitude.setInput(sound);
+    amplitude.setInput(sound[song]);
     amplitude.smooth(0.9);
 
     beatHearts[0] = new heart(dx, dy + r, 5, 252);
@@ -152,6 +236,9 @@ function draw() {
     // blendMode(ADD);
     colorMode(HSB, 256);
 
+
+    amplitude.setInput(sound[song]);
+    amplitude.smooth(0.9);
     var level = amplitude.getLevel();
     detectBeat(level);
 
@@ -246,9 +333,9 @@ function draw() {
                     generateSmallHeart(heartIndex, 12, smallHeartX, smallHeartY);
             }
 
-            var tempX = random(100, width - 150);
+            var tempX = random(200, width - 200);
             dx = tempX;
-            var tempY = random(100, height - 150);
+            var tempY = random(200, height - 200);
             dy = tempY;
         }
         else {
@@ -324,8 +411,7 @@ function draw() {
     text('click to play/pause', 4, 10);
 }
 
-
-// fade sound if mouse is over canvas
+//fade sound if mouse is over canvas
 function togglePlay() {
     if (sound.isPlaying()) {
         sound.pause();
@@ -384,10 +470,10 @@ function onBeat() {
     console.log(si);
 
     heartRotate = !heartRotate;
-    backgroundColor = color(random(0, 255), random(0, 255), random(0, 255));
+    backgroundColor = color(random(40, 180), random(40, 180), random(40, 180));
 }
 
-// function windowResized() {
-//     resizeCanvas(windowWidth, windowHeight);
-//     background(0);
-// }
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
+    background(0);
+}
